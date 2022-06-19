@@ -12,9 +12,6 @@ void act_comp(int arr[]);
 void check_game(int arr[]);
 void end_program();
 
-
-
-
 int main(){
     std::string option = "";
     std::cout <<"[1] Juego con IA - [2] Jugador contra jugador\n>";
@@ -106,7 +103,6 @@ void act_usr(int arr[]){
     }
     check_game(arr);
     act_comp(arr);
-    //act_usr(arr);
 }
 
 void act_comp(int arr[]){
