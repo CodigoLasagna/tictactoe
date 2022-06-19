@@ -1,6 +1,6 @@
-#README
-##Tic Tac Toe Game // Gato // Tres en raya
-###Como jugar
+# README
+## Tic Tac Toe Game // Gato // Tres en raya
+### Como jugar
 En el menú inicial se puede introducir uno de los comandos esenciales
 [1] para jugar contra la computadora
 [2] para jugar contra otro jugador
