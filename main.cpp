@@ -1,41 +1,58 @@
-#include <ctime>
+#include <cstdlib>
 #include <iostream>
 #include <string>
 #include <random>
 #include <cmath>
+#include <ctime>
+#include <thread>
+#include <chrono>
 
-void start_ia();
-void start_versus();
+void start_menu();
+void start_game(int type);
 void draw(int arr[]);
-void act_usr(int arr[]);
+void act_usr(int arr[], int player);
 void act_comp(int arr[]);
-void check_game(int arr[]);
+void check_game(int arr[], int player);
+void end_game();
 void end_program();
 
 int main(){
+    start_menu();
+}
+void start_menu(){
+    std::system("clear");
     std::string option = "";
-    std::cout <<"[1] Juego con IA - [2] Jugador contra jugador\n>";
+    std::cout <<"[1] JcE - [2] JcJ - [3] salir\n>";
     std::cin >> option;
-    switch (std::stoi(option)) {
-        case(1):
-            start_ia();
-            break;
-        case(2):
-            start_versus();
-            break;
+    if (std::stoi(option) != 3){
+        start_game(std::stoi(option)-1);
+    }else{
+        end_program();
     }
 }
 
-void start_ia(){
+void start_game(int type){
     srand(time(NULL));
     int tab [9] = {};
     draw(tab);
     int coin {rand()%2};
-    if (coin == 0){
-        act_usr(tab);
+    if (type == 0){
+        if (coin == 0){
+            act_usr(tab, 0);
+        }else{
+            act_comp(tab);
+        }
     }else{
-        act_comp(tab);
+        if (coin == 0){
+            act_usr(tab, 1);
+        }else{
+            act_usr(tab, 2);
+        }
     }
+}
+
+void start_versus(){
+
 }
 
 void draw(int arr[]){
@@ -62,13 +79,17 @@ void draw(int arr[]){
     std::cout << "\n";
 }
 
-void act_usr(int arr[]){
+void act_usr(int arr[], int player){
     std::string buffer = "";
     std::string letter = "";
     std::string number = "";
     int x{0}, y{0};
     int type{0};
-    std::cout << "Turno del jugador: ";
+    if (player != 0){
+        std::cout << "Turno del jugador " << player << ": ";
+    }else{
+        std::cout << "Turno del jugador: ";
+    }
     std::cin >>  buffer;
     if ((int)buffer.size() == 3){
         for (int i = 0; i <(int)buffer.size(); i++){
@@ -96,19 +117,31 @@ void act_usr(int arr[]){
         y = 2;
     }
     if (arr[x*3+y] == 0){
-        arr[x*3+y] = 1;
+        if (player != 0 ){
+            arr[x*3+y] = player;
+        }else{
+            arr[x*3+y] = 1;
+        }
     }else{
         std::cout << "Espació ocupado\n";
-        act_usr(arr);
+        act_usr(arr, player);
     }
-    check_game(arr);
-    act_comp(arr);
+    check_game(arr, player);
+    if (player == 0){
+        act_comp(arr);
+    }else if (player == 1){
+        act_usr(arr, 2);
+    }else{
+        act_usr(arr, 1);
+    }
+    //act_usr(arr);
 }
 
 void act_comp(int arr[]){
     int pos{(rand()%9)};
     int counter{};
     if (arr[pos] == 0){
+        std::this_thread::sleep_for(std::chrono::seconds(1));
         arr[pos] = 2;
     }else{
         for (int i = 0; i < 9; i++){
@@ -120,14 +153,14 @@ void act_comp(int arr[]){
             act_comp(arr);
         }else{
             std::cout << "EMPATE!!\n";
-            std::cin.get();
+            end_game();
         }
     }
-    check_game(arr);
-    act_usr(arr);
+    check_game(arr, 0);
+    act_usr(arr, 0);
 }
 
-void check_game(int arr[]){
+void check_game(int arr[], int player){
     int win{};
     int counter{};
     for (int l = 1; l < 3; l++){
@@ -154,23 +187,29 @@ void check_game(int arr[]){
         }
     }
     draw(arr);
+    if (win > 0){
+        if (win == 1 && player == 0){
+            std::cout << "El jugador gana!\n";
+        }else if (win == player){
+            std::cout << "El jugador " << player << " gana!\n";
+        }else if (win == 2 && player == 0){
+            std::cout << "La IA gana\n";
+        }
+        end_game();
+    }
     if (counter >= 9){
         std::cout << "EMPATE!!\n";
-            std::cin.get();
-            end_program();
-    }
-    if (win == 1){
-        std::cout << "El jugador gana\n";
-        std::cin.get();
-        end_program();
-    }else if (win == 2){
-        std::cout << "La IA gana\n";
-        std::cin.get();
-        end_program();
+        end_game();
     }
 }
 
-void end_program(){
+void end_game(){
+    std::cout << "Presione cualquier tecla para continuar...";
     std::cin.get();
+    std::cin.get();
+    start_menu();
+}
+
+void end_program(){
     exit(3);
 }
