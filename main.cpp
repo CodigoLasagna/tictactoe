@@ -46,10 +46,6 @@ void start_game(int type){
 	}
 }
 
-void start_versus(){
-
-}
-
 void draw(int arr[]){
 	std::system("clear");
 	std::cout << "  A   B   C\n";
